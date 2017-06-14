@@ -1,5 +1,15 @@
 import random
 
+#  ---------------Message to Encrypt------------------
+message = "I have always thought the actions of men the best interpreters of their thoughts."
+#  ---------------------------------------------------
+
+
+#Max range for RSA Primes - User Selected
+primeRange = 200
+
+
+# ---------------Functions--------------------
 #Test if Random Numbers are Prime (deterministic)
 def isPrime(n):
   if n == 2 or n == 3: return True
@@ -13,9 +23,6 @@ def isPrime(n):
     if n%(f+2) == 0: return False
     f +=6
   return True  
-
-#Max range for RSA Primes
-primeRange = 200
 
 #initial prime number "guesses"
 pKey = random.randrange(primeRange)
@@ -43,6 +50,7 @@ def egcd(c, d):
         g, y, x = egcd(d % c, c)
         return (g, x - (d // c) * y, y)
 
+#Modular Inverse Formula
 def modinv(c, m):
     g, x, y = egcd(c, m)
     #if g != 1:
@@ -76,6 +84,8 @@ def decrypt(public, outText):
 	plain = [chr((char ** key2) % n) for char in outText]
 	return ''.join(plain)
   
+    
+# -------------------Main Block-------------------
 #Set as equal nonprimes so we must guess new
 pPrime = 2
 qPrime = 2
@@ -84,13 +94,17 @@ qPrime = 2
 while (pPrime == qPrime):
   pPrime, qPrime = genPrimes(pKey, qKey)
 
+#Create Public and Private Keys from Random Primes    
 pubKey, privKey = genKey(pPrime, qPrime)
 print("Hello!")
 print("Your public key is", pubKey ,"and your private key is", privKey)
-message = "I have always thought the actions of men the best interpreters of their thoughts."
+
+#Encrypt Message
 encryptedMessage = encrypt(privKey, message)
 print("Your encrypted message is: ")
 print(''.join(map(lambda x: str(x), encryptedMessage)))
+
+#Decrypt Message
 print("Decrypting message with public key ", pubKey ," . . .")
 print("Your message is:")
 print(decrypt(pubKey, encryptedMessage))
